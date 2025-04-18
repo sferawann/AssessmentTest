@@ -314,6 +314,14 @@ func (u *allUsecase) Tabung(newTabung model.Transaksi) (model.Transaksi, error) 
 		return model.Transaksi{}, errors.New("rekening tidak ditemukan")
 	}
 
+	if newTabung.Nominal != math.Floor(newTabung.Nominal) {
+		utils.Log.WithFields(logrus.Fields{
+			"nominal": newTabung.Nominal,
+			"action":  "validasi nominal bulat",
+			"layer":   "allUsecase",
+		}).Warn("Nominal tidak boleh desimal")
+		return model.Transaksi{}, errors.New("nominal harus bilangan bulat")
+	}
 	if newTabung.Nominal <= 0 {
 		utils.Log.WithFields(logrus.Fields{
 			"nominal": newTabung.Nominal,
